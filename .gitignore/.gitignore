@@ -21,3 +21,23 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+
+Folders not to be included
+.metadata/
+.recommenders/
+.classpath
+.project
+Assignment1/.settings
+Assignment1/bin
+Assignment1/.classpath
+Assignment1/.project
+Assignment2/.settings
+Assignment2/bin
+Assignment2/.classpath
+Assignment2/.project
+Assignment3/.settings
+Assignment3/bin
+Assignment3/.classpath
+Assignment3/.project
+
+
