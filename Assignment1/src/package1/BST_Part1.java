@@ -1,4 +1,5 @@
-package package1; 
+package package1;
+
 /**
  * CSE 522: Assignment 1, Part 1
  * @author Yashankit

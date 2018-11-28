@@ -1,11 +1,11 @@
-package package1;
+package package2;
 
 import java.util.Random;
 import java.util.concurrent.Semaphore;
 
 // Readers-Writers with Writer Priority
 
-public class RW_Semaphore {
+public class RW_Semaphore2 {
 
 	public static void main(String[] args) {
 
@@ -103,72 +103,54 @@ class Database {
 	int ww = 0; // # waiting writers
 	int wr = 0; // # waiting readers
 
-	Semaphore sync = new Semaphore(1);
-	Semaphore writer = new Semaphore(0);
-	Semaphore reader = new Semaphore(0);
+	Semaphore s1 = new Semaphore(1);
+	Semaphore s2 = new Semaphore(1);
+	Semaphore s3 = new Semaphore(1);
 
 	public void request_read() throws InterruptedException {
-		sync.acquire();
+		s1.acquire(); 
 		while (w == 1 || ww > 0) {
 			wr++;
-			sync.release();
-			reader.acquire();
-			sync.acquire();
+			s1.release();
+			s2.acquire();
+			s1.acquire();
 			wr--;
 		}
 		r++;
-		sync.release();
+		s1.release();
 	}
 
 	public void done_read() {
 		try {
-			sync.acquire();
+			s1.acquire(); 
 			r--;
-			sync.release();
-
+			while (s2.hasQueuedThreads())
+				s2.release();
+			s1.release();
 		} catch (Exception e) {
 
-		}
-
-		if (ww > 0) {
-			while (writer.hasQueuedThreads()) {
-				writer.release();
-			}
-		} else {
-			while (reader.hasQueuedThreads()) {
-				reader.release();
-			}
 		}
 	}
 
 	public void request_write() throws InterruptedException {
-		sync.acquire();
+		s3.acquire();
 		while (r > 0 || w == 1) {
 			ww++;
-			sync.release();
-			writer.acquire();
-			sync.acquire();
+			s3.release();
+			s2.acquire();
+			s3.acquire();
 			ww--;
 		}
 		w = 1;
-		sync.release();
+		s3.release(); 
 	}
 
 	public void done_write() throws InterruptedException {
-		sync.acquire();
+		s3.acquire();
 		w = 0;
-		sync.release();
-
-		if (ww > 0) {
-			while (writer.hasQueuedThreads()) {
-				writer.release();
-			}
-		} else {
-			while (reader.hasQueuedThreads()) {
-				reader.release();
-			}
-
-		}
+		while (s2.hasQueuedThreads())
+			s2.release();
+		s3.release();
 	}
 
 	int read() {
